@@ -1,0 +1,20 @@
+{
+  "name": "pokemon-app",
+  "version": "0.0.0",
+  "description": "Simple app created with React",
+  "repository": "github:NicolasZanotti/pokemon-app",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^1.0.0",
+    "vite": "^2.6.4"
+  }
+}

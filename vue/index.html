@@ -9,14 +9,9 @@
 <body>
     <div id="root"></div>
     <script type="module">
-        import React from "react";
-        import ReactDOM from "react-dom";
-        import Pokemon from "./Pokemon";
-
-        ReactDOM.render(
-            React.createElement(Pokemon),
-            document.getElementById("root")
-        );
+        import { createApp } from "vue";
+        import App from "./App.vue";
+        createApp(App).mount("#root");
     </script>
 </body>
 </html>

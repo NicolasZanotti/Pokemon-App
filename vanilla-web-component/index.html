@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <title>List of Pokémon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script>
+        class PokemonListing extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({
+                    mode: 'open'
+                });
+
+                this._data = [];
+            }
+
+            render() {
+                this.shadowRoot.innerHTML = /*html */ `
+                    <style>
+                        .content ul {
+                            min-height: calc(1rem * 10);
+                        }
+
+                        .content li {
+                            height: 1rem;
+                        }
+                    </style>
+                    <h1>List of Pokémon</h1>
+                    <div class="content"></div>
+                    <div><a href="#previous">Previous</a>&nbsp;<a href="#next">Next</a></div>`;
+            }
+
+            renderLoading() {
+                this.shadowRoot.querySelector('.content').innerHTML = /*html*/ `<ul></ul>`;
+            }
+
+            renderList() {
+                this.shadowRoot.querySelector('.content').innerHTML = /*html*/ `
+                <ul>
+                    ${this._data.map( item => `<li>${item.name}</li>` ).join("")}
+                </ul>`;
+            }
+
+            connectedCallback() {
+                this.render();
+
+                const nextEl = this.shadowRoot.querySelector("a[href='#next']");
+                if (nextEl !== null) nextEl.addEventListener("click", event => {
+                    event.preventDefault()
+
+                    if (!this.loading) {
+                        this.offset = this.offset + this.limit;
+                        this.load();
+                    }
+                });
+
+                const prevEl = this.shadowRoot.querySelector("a[href='#previous']");
+                if (prevEl !== null) prevEl.addEventListener("click", event => {
+                    event.preventDefault()
+
+                    if (!this.loading) {
+                        const nextOffset = this.offset - this.limit;
+                        console.log(nextOffset);
+                        if (nextOffset >= 0) {
+                            this.offset = nextOffset;
+                            this.load();
+                        }
+                    }
+                });
+
+                this.load();
+            }
+
+            async load() {
+                this.loading = true;
+                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.limit}&offset=${this.offset}`);
+                const json = await response.json();
+                this._data = json.results;
+                this.loading = false;
+            }
+
+            static get observedAttributes() {
+                return ["loading", "limit", "offset"];
+            }
+
+            attributeChangedCallback(attrName, oldVal, newVal) {
+                if (attrName === "loading") {
+                    if (this.loading) this.renderLoading();
+                    else this.renderList();
+                }
+            }
+
+            get loading() {
+                return JSON.parse(this.getAttribute("loading"));
+            }
+
+            set loading(val) {
+                this.setAttribute("loading", JSON.stringify(val));
+            }
+
+            get limit() {
+                return JSON.parse(this.getAttribute("limit"));
+            }
+
+            set limit(val) {
+                this.setAttribute("limit", JSON.stringify(val));
+            }
+
+            get offset() {
+                return JSON.parse(this.getAttribute("offset"));
+            }
+
+            set offset(val) {
+                this.setAttribute("offset", JSON.stringify(val));
+            }
+        }
+
+        window.customElements.define('pokemon-listing', PokemonListing);
+    </script>
+</head>
+<body>
+    <pokemon-listing limit="10" offset="0"></pokemon-listing>
+</html>

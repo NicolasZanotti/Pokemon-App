@@ -23,7 +23,7 @@ function Pokemon() {
       );
   }, [offset]);
 
-  function previous() {
+  function prev() {
     if (!isLoaded) return;
     setOffset(offset - 10);
   }
@@ -35,14 +35,14 @@ function Pokemon() {
 
   if (error) return "An error occurred";
   return (
-    <div className="Pokemon">
+    <div className="pokemon">
       <h1>List of Pokémon</h1>
       <ul>
         {items.map(item => (
           <li key={item.url}>{item.name}</li>
         ))}
       </ul>
-      <button disabled={offset === 0} onClick={previous}>
+      <button disabled={offset === 0} onClick={prev}>
         Previous
       </button>
       <button disabled={offset >= 30} onClick={next}>

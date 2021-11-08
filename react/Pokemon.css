@@ -1,6 +1,6 @@
-.Pokemon ul {
+.pokemon ul {
     min-height: calc(1rem * 10);
 }
-.Pokemon li {
+.pokemon li {
     height: 1rem;
 }

@@ -1,39 +1,101 @@
-<!doctype html>
-<html lang="en-US">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8" />
     <title>List of Pokémon</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-</head>
-<body>
     <style>
-        .pokemon ul {
-            min-height: calc(1rem * 10);
+        .listing {
+            --fade-duration: 500ms;
+            font-family: sans-serif;
         }
-        .pokemon li {
-            height: 1rem;
+
+        .listing ul {
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .listing li {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .listing[data-state="loaded"] ul:after,
+        .listing[data-state="loading"] ul:after {
+            content: " ";
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            display: block;
+            position: absolute;
+            top: -2px;
+            left: -2px;
+        }
+
+        .listing[data-state="loading"] ul:after {
+            cursor: wait;
+            background-color: transparent;
+        }
+
+        @keyframes fade {
+            0%, 100% {
+                opacity: 0
+            }
+            50% {
+                opacity: 1
+            }
+        }
+
+        .listing[data-state="loaded"] ul:after {
+            background-color: #fff;
+            animation-name: fade;
+            animation-duration: var(--fade-duration);
+            animation-direction: forwards;
+            animation-timing-function: ease-in-out;
         }
     </style>
-    <div class="pokemon">
+</head>
+<body>
+    <div id="root" class="listing" data-state>
         <h1>List of Pokémon</h1>
-        <ul class="js-list"></ul>
-        <button class="js-previous" disabled>Previous</button>&nbsp;<button class="js-next">Next</button>
+        <ul>
+            <li>░░░░░░</li>
+            <li>░░░░░</li>
+            <li>░░░░░░░</li>
+            <li>░░░░</li>
+            <li>░░░░░░░░░</li>
+            <li>░░</li>
+            <li>░░░░░░░</li>
+            <li>░░░░░</li>
+            <li>░░░░</li>
+            <li>░░░</li>
+        </ul>
+        <button disabled>Previous</button>&nbsp;<button>Next</button>
     </div>
     <script>
-        function PokémonListing(rootEl) {
-            if (rootEl === null) throw new Error("root element not found");
+        function PokémonListing(root) {
+            if (!root) throw new Error("Root element not set.");
+
+            const timeToAnimationComplete = parseInt(getComputedStyle(root).getPropertyValue("--fade-duration"));
+            const li = root.querySelectorAll("li");
+            const [btnPrev, btnNext] = root.querySelectorAll("button");
 
             const model = {
-                offset: 0,
-                limit: 10,
                 data: [],
-                onChange() {},
+                limit: 10,
+                offset: 0,
                 async update() {
-                    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.limit}&offset=${this.offset}`)
-                    const json = await response.json();
-                    this.data = json.results
-                    this.onChange();
+                    try {
+                        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.limit}&offset=${this.offset}`);
+                        const json = await response.json();
+                        this.data = json.results;
+                        this.onUpdate();
+                    } catch (error) {
+                        this.onError();
+                    }
+                },
+                nameByIndex(index) {
+                    return this.data[index].name
                 },
                 next() {
                     this.offset += this.limit;
@@ -42,51 +104,36 @@
                 prev() {
                     this.offset -= this.limit;
                     this.update();
-                }
+                },
+                onUpdate: () => {},
+                onError: () => {},
+            };
+
+            model.onUpdate = function() {
+                root.dataset.state = "loaded";
+
+                setTimeout(() => li.forEach((el, index) => el.textContent = model.nameByIndex(index)), timeToAnimationComplete / 2);
+                setTimeout(() => root.dataset.state = "", timeToAnimationComplete);
+
+                btnPrev.disabled = model.offset === 0;
+                btnNext.disabled = model.offset === 30;
             }
 
-            const state = {
-                loading: true
-            }
+            btnPrev.addEventListener("click", () => {
+                if (root.dataset.state !== "") return;
+                root.dataset.state = "loading";
+                model.prev()
+            });
 
-            function renderList(rootEl, data) {
-                const list = rootEl.querySelector(".js-list");
-                if (list === null) throw new Error("list not found");
-
-                let fragment = new DocumentFragment();
-                data.forEach(item => {
-                    const el = document.createElement("li");
-                    el.textContent = item.name;
-                    fragment.appendChild(el);
-                });
-
-                list.replaceChildren(fragment);
-            }
-
-            const nextEl = rootEl.querySelector(".js-next");
-            if (nextEl !== null) nextEl.addEventListener("click", event => {
-                if (state.loading) return;
-                state.loading = true;
+            btnNext.addEventListener("click", () => {
+                if (root.dataset.state !== "") return;
+                root.dataset.state = "loading";
                 model.next()
             });
-
-            const prevEl = rootEl.querySelector(".js-previous");
-            if (prevEl !== null) prevEl.addEventListener("click", event => {
-                if (state.loading) return;
-                state.loading = true;
-                model.prev();
-            });
-
-            model.onChange = function() {
-                state.loading = false;
-                renderList(rootEl, this.data);
-                prevEl.disabled = model.offset === 0;
-                nextEl.disabled = model.offset === 30;
-            }
 
             model.update();
         }
 
-        PokémonListing(document.querySelector(".pokemon"))
+        PokémonListing(document.getElementById("root"))
     </script>
 </html>

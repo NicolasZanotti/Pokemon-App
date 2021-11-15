@@ -8,9 +8,9 @@
     <link rel="modulepreload" href="pokemon-listing.mjs" />
 </head>
 <body>
-    <div class="pokemon"></div>
+    <div id="root"></div>
     <script type="module">
         import PokémonListing from "./pokemon-listing.mjs";
-        PokémonListing(document.querySelector(".pokemon"));
+        PokémonListing(document.getElementById("root"));
     </script>
 </html>

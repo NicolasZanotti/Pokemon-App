@@ -1,6 +1,44 @@
-.Pokemon ul {
-  min-height: calc(1rem * 10);
+.pokemon {
+    --fade-duration: 400ms;
+    font-family: sans-serif;
 }
-.Pokemon li {
-  height: 1rem;
+
+.pokemon ul {
+    position: relative;
+    padding-left: 1rem;
+}
+
+.pokemon li {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.pokemon[data-state="loaded"] ul:after,
+.pokemon[data-state="loading"] ul:after {
+    content: " ";
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    display: block;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+}
+
+.pokemon[data-state="loading"] ul:after {
+    cursor: wait;
+    background-color: transparent;
+}
+
+@keyframes fade {
+    0%, 100% {
+        opacity: 0
+    }
+    50% {
+        opacity: 1
+    }
+}
+
+.pokemon[data-state="loaded"] ul:after {
+    background-color: #fff;
+    animation: fade var(--fade-duration) ease-in-out forwards;
 }

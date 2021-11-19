@@ -5,25 +5,25 @@
     <link rel="preload" href="https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0" as="fetch" crossorigin="anonymous">
     <title>List of Pokémon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <style>
-        .listing {
+        .pokemon {
             --fade-duration: 400ms;
             font-family: sans-serif;
         }
 
-        .listing ul {
+        .pokemon ul {
             position: relative;
             padding-left: 1rem;
         }
 
-        .listing li {
+        .pokemon li {
             font-size: 1rem;
             margin-bottom: 0.2rem;
         }
 
-        .listing[data-state="loaded"] ul:after,
-        .listing[data-state="loading"] ul:after {
+        .pokemon[data-state="loaded"] ul:after,
+        .pokemon[data-state="loading"] ul:after {
             content: " ";
             width: calc(100% + 4px);
             height: calc(100% + 4px);
@@ -33,7 +33,7 @@
             left: -2px;
         }
 
-        .listing[data-state="loading"] ul:after {
+        .pokemon[data-state="loading"] ul:after {
             cursor: wait;
             background-color: transparent;
         }
@@ -43,14 +43,14 @@
             50% { opacity: 1 }
         }
 
-        .listing[data-state="loaded"] ul:after {
+        .pokemon[data-state="loaded"] ul:after {
             background-color: #fff;
             animation: fade var(--fade-duration) ease-in-out forwards;
         }
     </style>
 </head>
 <body>
-    <div id="root" class="listing" data-state>
+    <div id="root" class="pokemon" data-state>
         <h1>List of Pokémon</h1>
         <ul>
             <li>░░░░░░</li>
@@ -124,7 +124,7 @@
                 setTimeout(() => root.dataset.state = "", timeToAnimationComplete);
 
                 btnPrev.disabled = model.offset === 0;
-                btnNext.disabled = model.offset === 30;
+                btnNext.disabled = model.offset === 50;
             }
 
             btnPrev.addEventListener("click", () => {

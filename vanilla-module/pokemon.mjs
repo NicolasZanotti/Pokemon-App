@@ -68,7 +68,7 @@ function onRootElementClick(event) {
   }
 }
 
-export default function PokémonListing(rootElement) {
+export default function Pokemon(rootElement) {
   if (!rootElement) throw new Error("Missing root element.");
   
   // Add event listeners
@@ -78,7 +78,7 @@ export default function PokémonListing(rootElement) {
     rootElement.innerHTML = html({
       data: model.data,
       prevDisabled: model.offset === 0,
-      nextDisabled: model.offset === 30,
+      nextDisabled: model.offset === 50,
     });
   };
   

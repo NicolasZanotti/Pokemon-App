@@ -35,7 +35,7 @@ function Pokemon() {
 
   if (error) return "An error occurred";
   return (
-    <div className="Pokemon">
+    <div className="pokemon">
       <h1>List of Pokémon</h1>
       <ul>
         {items.map(item => (
@@ -45,7 +45,7 @@ function Pokemon() {
       <button disabled={offset === 0} onClick={previous}>
         Previous
       </button>
-      <button disabled={offset >= 30} onClick={next}>
+      <button disabled={offset >= 50} onClick={next}>
         Next
       </button>
     </div>

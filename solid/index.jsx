@@ -1,4 +1,4 @@
 import { render } from "solid-js/web";
-import App from "./App";
+import Pokemon from "./Pokemon";
 
-render(App, document.getElementById("root"));
+render(Pokemon, document.getElementById("root"));

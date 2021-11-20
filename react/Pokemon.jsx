@@ -23,7 +23,7 @@ function Pokemon() {
       );
   }, [offset]);
 
-  function previous() {
+  function prev() {
     if (!isLoaded) return;
     setOffset(offset - 10);
   }
@@ -42,7 +42,7 @@ function Pokemon() {
           <li key={item.url}>{item.name}</li>
         ))}
       </ul>
-      <button disabled={offset === 0} onClick={previous}>
+      <button disabled={offset === 0} onClick={prev}>
         Previous
       </button>
       <button disabled={offset >= 50} onClick={next}>

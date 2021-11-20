@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <link rel="preload" href="https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0" as="fetch" crossorigin="anonymous">
     <title>List of Pokémon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
@@ -9,14 +10,9 @@
 <body>
     <div id="root"></div>
     <script type="module">
-        import React from "react";
-        import ReactDOM from "react-dom";
-        import Pokemon from "./Pokemon";
-
-        ReactDOM.render(
-            React.createElement(Pokemon),
-            document.getElementById("root")
-        );
+        import { createApp } from "vue";
+        import Pokemon from "./Pokemon.vue";
+        createApp(Pokemon).mount("#root");
     </script>
 </body>
 </html>

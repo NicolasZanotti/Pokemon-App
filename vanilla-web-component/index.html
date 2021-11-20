@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-US">
 <head>
     <meta charset="UTF-8" />
     <title>List of Pokémon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+</head>
+<body>
+    <pokemon-app limit="10" offset="0"></pokemon-app>
     <script>
-        class PokemonListing extends HTMLElement {
+        class Pokemon extends HTMLElement {
             constructor() {
                 super();
                 this.attachShadow({
@@ -19,28 +22,23 @@
             render() {
                 this.shadowRoot.innerHTML = /*html */ `
                     <style>
-                        .content ul {
+                        .pokemon ul {
                             min-height: calc(1rem * 10);
                         }
 
-                        .content li {
+                        .pokemon li {
                             height: 1rem;
                         }
                     </style>
-                    <h1>List of Pokémon</h1>
-                    <div class="content"></div>
-                    <div><a href="#previous">Previous</a>&nbsp;<a href="#next">Next</a></div>`;
-            }
-
-            renderLoading() {
-                this.shadowRoot.querySelector('.content').innerHTML = /*html*/ `<ul></ul>`;
+                    <div class="pokemon">
+                        <h1>List of Pokémon</h1>
+                        <ul></ul>
+                        <div><a href="#previous">Previous</a>&nbsp;<a href="#next">Next</a></div>
+                    </div>`;
             }
 
             renderList() {
-                this.shadowRoot.querySelector('.content').innerHTML = /*html*/ `
-                <ul>
-                    ${this._data.map( item => `<li>${item.name}</li>` ).join("")}
-                </ul>`;
+                this.shadowRoot.querySelector('ul').innerHTML = this._data.map(item => `<li>${item.name}</li>`).join("");
             }
 
             connectedCallback() {
@@ -62,7 +60,6 @@
 
                     if (!this.loading) {
                         const nextOffset = this.offset - this.limit;
-                        console.log(nextOffset);
                         if (nextOffset >= 0) {
                             this.offset = nextOffset;
                             this.load();
@@ -87,8 +84,7 @@
 
             attributeChangedCallback(attrName, oldVal, newVal) {
                 if (attrName === "loading") {
-                    if (this.loading) this.renderLoading();
-                    else this.renderList();
+                    this.renderList();
                 }
             }
 
@@ -117,9 +113,6 @@
             }
         }
 
-        window.customElements.define('pokemon-listing', PokemonListing);
+        window.customElements.define('pokemon-app', Pokemon);
     </script>
-</head>
-<body>
-    <pokemon-listing limit="10" offset="0"></pokemon-listing>
 </html>

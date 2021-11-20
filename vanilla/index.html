@@ -2,91 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
+    <link rel="preload" href="https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0" as="fetch" crossorigin="anonymous">
     <title>List of Pokémon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-</head>
-<body>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <style>
-        .pokemon ul {
-            min-height: calc(1rem * 10);
+        .pokemon {
+            --fade-duration: 400ms;
+            font-family: sans-serif;
         }
+
+        .pokemon ul {
+            position: relative;
+            padding-left: 1rem;
+        }
+
         .pokemon li {
-            height: 1rem;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .pokemon[data-state="loaded"] ul:after,
+        .pokemon[data-state="loading"] ul:after {
+            content: " ";
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            display: block;
+            position: absolute;
+            top: -2px;
+            left: -2px;
+        }
+
+        .pokemon[data-state="loading"] ul:after {
+            cursor: wait;
+            background-color: transparent;
+        }
+
+        @keyframes fade {
+            0%, 100% { opacity: 0 }
+            50% { opacity: 1 }
+        }
+
+        .pokemon[data-state="loaded"] ul:after {
+            background-color: #fff;
+            animation: fade var(--fade-duration) ease-in-out forwards;
         }
     </style>
-    <div class="pokemon">
+</head>
+<body>
+    <div id="root" class="pokemon" data-state>
         <h1>List of Pokémon</h1>
-        <ul class="js-list"></ul>
-        <button class="js-previous" disabled>Previous</button>&nbsp;<button class="js-next">Next</button>
+        <ul>
+            <li>░░░░░░</li>
+            <li>░░░░░</li>
+            <li>░░░░░░░</li>
+            <li>░░░░</li>
+            <li>░░░░░░░░░</li>
+            <li>░░</li>
+            <li>░░░░░░░</li>
+            <li>░░░░░</li>
+            <li>░░░░</li>
+            <li>░░░</li>
+        </ul>
+        <button disabled>Previous</button>&nbsp;<button>Next</button>
     </div>
     <script>
-        function PokémonListing(rootEl) {
-            if (rootEl === null) throw new Error("root element not found");
+        class PokémonModel {
+            #data = [];
+            #limit = 10;
+            #offset = 0;
 
-            const model = {
-                offset: 0,
-                limit: 10,
-                data: [],
-                onChange() {},
-                async update() {
-                    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.limit}&offset=${this.offset}`)
+            async update() {
+                try {
+                    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${this.#limit}&offset=${this.#offset}`);
                     const json = await response.json();
-                    this.data = json.results
-                    this.onChange();
-                },
-                next() {
-                    this.offset += this.limit;
-                    this.update();
-                },
-                prev() {
-                    this.offset -= this.limit;
-                    this.update();
+                    this.#data = json.results;
+                    this.onUpdate();
+                } catch (error) {
+                    this.onError();
                 }
             }
 
-            const state = {
-                loading: true
+            get offset() {
+                return this.#offset;
             }
 
-            function renderList(rootEl, data) {
-                const list = rootEl.querySelector(".js-list");
-                if (list === null) throw new Error("list not found");
-
-                let fragment = new DocumentFragment();
-                data.forEach(item => {
-                    const el = document.createElement("li");
-                    el.textContent = item.name;
-                    fragment.appendChild(el);
-                });
-
-                list.replaceChildren(fragment);
+            nameByIndex(index) {
+                return this.#data[index].name
             }
 
-            const nextEl = rootEl.querySelector(".js-next");
-            if (nextEl !== null) nextEl.addEventListener("click", event => {
-                if (state.loading) return;
-                state.loading = true;
-                model.next()
-            });
+            next() {
+                this.#offset += this.#limit;
+                this.update();
+            }
 
-            const prevEl = rootEl.querySelector(".js-previous");
-            if (prevEl !== null) prevEl.addEventListener("click", event => {
-                if (state.loading) return;
-                state.loading = true;
+            prev() {
+                this.#offset -= this.#limit;
+                this.update();
+            }
+
+            onUpdate() {}
+            onError() {}
+        }
+
+        function PokémonController(root, model) {
+            if (!root) throw new Error("Root element not set.");
+            if (!model) throw new Error("Model not set.");
+
+            const timeToAnimationComplete = parseInt(getComputedStyle(root).getPropertyValue("--fade-duration"));
+            const li = root.querySelectorAll("li");
+            const [btnPrev, btnNext] = root.querySelectorAll("button");
+
+            function render() {
+                li.forEach((el, index) => el.textContent = model.nameByIndex(index))
+            }
+
+            model.onUpdate = function() {
+                root.dataset.state = "loaded";
+
+                setTimeout(render, timeToAnimationComplete / 2);
+                setTimeout(() => root.dataset.state = "", timeToAnimationComplete);
+
+                btnPrev.disabled = model.offset === 0;
+                btnNext.disabled = model.offset === 50;
+            }
+
+            btnPrev.addEventListener("click", () => {
+                if (root.dataset.state !== "") return;
+                root.dataset.state = "loading";
                 model.prev();
             });
 
-            model.onChange = function() {
-                state.loading = false;
-                renderList(rootEl, this.data);
-                prevEl.disabled = model.offset === 0;
-                nextEl.disabled = model.offset === 30;
-            }
+            btnNext.addEventListener("click", () => {
+                if (root.dataset.state !== "") return;
+                root.dataset.state = "loading";
+                model.next();
+            });
 
             model.update();
         }
 
-        PokémonListing(document.querySelector(".pokemon"))
+        PokémonController(document.getElementById("root"), new PokémonModel())
     </script>
 </html>

@@ -1,16 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en-US">
 <head>
     <meta charset="UTF-8" />
+    <link rel="modulepreload" href="pokemon.mjs" />
+    <link rel="preload" href="https://pokeapi.co/api/v2/pokemon/?limit=10&offset=0" as="fetch" crossorigin="anonymous">
     <title>List of Pokémon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <link rel="modulepreload" href="pokemon-listing.mjs" />
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
 </head>
 <body>
     <div id="root"></div>
     <script type="module">
-        import PokémonListing from "./pokemon-listing.mjs";
-        PokémonListing(document.querySelector("#pokemon"));
+        import Pokemon from "./pokemon.mjs";
+        Pokemon(document.getElementById("root"));
     </script>
 </html>

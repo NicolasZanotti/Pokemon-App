@@ -16,3 +16,8 @@ The API call is: `https://pokeapi.co/api/v2/pokemon/?limit=10&offset=10`
 ## Style Guide
 
 The component name is "Pokemon". The root HTML element should have an ID of `root` and a class `pokemon`.
+
+The function and variable names are:
+
+* `prev` and `next` for the button event handlers.
+* `update` for fetching the Pokémon names from the API

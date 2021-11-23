@@ -22,9 +22,10 @@ The component name is "Pokemon". The root HTML element should have an ID of `roo
 
 The function and variable names are:
 
+* `Pokemon` as the app/component name.
 * `prev` and `next` for the button event handlers;
 * `update` for fetching the Pokémon names from the API;
-* `Pokemon` as the app/component name.
+* `names` for storing the Pokémon names;
 
 The below base template includes the empty state of the component.
 
@@ -43,7 +44,8 @@ The below base template includes the empty state of the component.
         <li>░░░░</li>
         <li>░░░</li>
     </ul>
-    <button disabled>Previous</button>&nbsp;<button>Next</button>
+    <button disabled>Previous</button>
+    <button>Next</button>
 </div>
 ```
 
@@ -53,12 +55,8 @@ The below base template includes the empty state of the component.
 }
 
 .pokemon ul {
-    position: relative;
-    padding-left: 1rem;
-}
-
-.pokemon li {
     font-size: 1rem;
-    margin-bottom: 0.2rem;
+    line-height: 1.2rem;
+    min-height: calc(1.2rem * 10);
 }
 ```

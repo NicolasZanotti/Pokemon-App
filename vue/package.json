@@ -9,10 +9,10 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.3.13"
+    "vue": "3.4.3"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.5.2",
-    "vite": "^4.5.0"
+    "@vitejs/plugin-vue": "5.0.2",
+    "vite": "5.0.10"
   }
 }
